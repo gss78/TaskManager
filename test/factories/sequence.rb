@@ -6,7 +6,7 @@ FactoryBot.define do
   sequence :email do |n|
     "person#{n}@example.com"
   end
-  
+
   sequence :date, aliases: [:expired_at] do
     Date.today + rand(10..20)
   end
