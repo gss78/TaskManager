@@ -38,6 +38,10 @@ gem 'simple_form'
 gem 'state_machines'
 gem 'state_machines-activerecord'
 gem 'slim-rails'
+gem 'kaminari'
+gem 'ransack', github: 'activerecord-hackery/ransack'
+gem 'responders'
+gem 'active_model_serializers'
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
