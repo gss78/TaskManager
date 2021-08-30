@@ -4,7 +4,7 @@ class Web::BoardsControllerTest < ActionController::TestCase
   setup do
     user = create(:user)
     sign_in user
-  end  
+  end
 
   test 'should get new' do
     get :show
