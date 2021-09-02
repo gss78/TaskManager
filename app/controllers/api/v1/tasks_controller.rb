@@ -1,6 +1,10 @@
 class Api::V1::TasksController < Api::V1::ApplicationController
+  include AuthHelper
+  before_action :authenticate_user!
+  skip_before_action :authenticate_user!, only: [:index, :show]
+  helper_method :current_user
   respond_to :json
-
+  
   def index
     tasks = Task.all
                 .ransack(ransack_params)
@@ -16,5 +20,18 @@ class Api::V1::TasksController < Api::V1::ApplicationController
  
     respond_with(task, serializer: TaskSerializer)
   end
+
+  def create
+    task = current_user.my_tasks.new(task_params)
+    task.save
   
+    respond_with(task, serializer: TaskSerializer, location: nil)
+  end
+  
+  private
+  
+  def task_params
+    params.require(:task).permit(:name, :description, :author_id, :assignee_id, :state_event)
+  end
+
 end
