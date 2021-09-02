@@ -1,8 +1,5 @@
 class Api::V1::TasksController < Api::V1::ApplicationController
-  include AuthHelper
-  helper_method :current_user
-  respond_to :json
-
+  
   def index
     tasks = Task.all.
       ransack(ransack_params).
