@@ -1,7 +1,7 @@
 class Api::V1::TasksController < Api::V1::ApplicationController
   include AuthHelper
   before_action :authenticate_user!
-  skip_before_action :authenticate_user!, only: [:index, :show]
+  skip_before_action :authenticate_user!, only: [:index, :show, :update]
   helper_method :current_user
   respond_to :json
   
@@ -26,6 +26,13 @@ class Api::V1::TasksController < Api::V1::ApplicationController
     task.save
   
     respond_with(task, serializer: TaskSerializer, location: nil)
+  end
+
+  def update
+    task = Task.find(params[:id])
+    task.update(task_params)
+  
+    respond_with(task, serializer: TaskSerializer)
   end
   
   private
