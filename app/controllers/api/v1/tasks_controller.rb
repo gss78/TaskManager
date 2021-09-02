@@ -1,7 +1,5 @@
 class Api::V1::TasksController < Api::V1::ApplicationController
   include AuthHelper
-  before_action :authenticate_user!
-  skip_before_action :authenticate_user!, except: [:create]
   helper_method :current_user
   respond_to :json
 
