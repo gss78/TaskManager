@@ -42,7 +42,7 @@ gem 'kaminari'
 gem 'ransack', github: 'activerecord-hackery/ransack'
 gem 'responders'
 gem 'active_model_serializers'
-gem 'webpacker-react', "~> 1.0.0.beta.1"
+gem 'webpacker-react', "~> 0.3.2"
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
