@@ -1,5 +1,5 @@
 import React from 'react';
-import Board from '@lourenci/react-kanban';
+import Board from '@asseinfo/react-kanban';
 
 const data = {
   columns: [
