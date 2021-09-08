@@ -28,6 +28,6 @@ const data = {
   ],
 };
 
-const TaskBoard = () => <Board initialBoard={data} />;
+const TaskBoard = () => <Board disableColumnDrag initialBoard={data} />;
 
 export default TaskBoard;
