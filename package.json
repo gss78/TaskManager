@@ -10,6 +10,7 @@
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",
     "@rails/webpacker": "5.4.0",
+    "axios": "^0.21.4",
     "babel-eslint": "^10.1.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "eslint": "^7.32.0",
