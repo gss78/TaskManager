@@ -64,7 +64,11 @@ const TaskBoard = () => {
   useEffect(() => loadBoard(), []);
   useEffect(() => generateBoard(), [boardCards]);
 
-  return <KanbanBoard renderCard={(card) => <Task task={card} />}>{board}</KanbanBoard>;
+  return (
+    <KanbanBoard disableColumnDrag renderCard={(card) => <Task task={card} />}>
+      {board}
+    </KanbanBoard>
+  );
 };
 
 export default TaskBoard;
