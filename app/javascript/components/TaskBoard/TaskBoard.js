@@ -27,8 +27,6 @@ const initialBoard = {
 const TaskBoard = () => {
   const [board, setBoard] = useState(initialBoard);
   const [boardCards, setBoardCards] = useState([]);
-  useEffect(() => loadBoard(), []);
-  useEffect(() => generateBoard(), [boardCards]);
 
   const loadColumn = (state, page, perPage) =>
     TasksRepository.index({
@@ -62,6 +60,9 @@ const TaskBoard = () => {
   const loadBoard = () => {
     STATES.map(({ key }) => loadColumnInitial(key));
   };
+
+  useEffect(() => loadBoard(), []);
+  useEffect(() => generateBoard(), [boardCards]);
 
   return <KanbanBoard renderCard={(card) => <Task task={card} />}>{board}</KanbanBoard>;
 };
