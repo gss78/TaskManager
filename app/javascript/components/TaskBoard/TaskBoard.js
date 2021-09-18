@@ -5,6 +5,8 @@ import { propOr } from 'ramda';
 import Task from 'components/Task';
 import ColumnHeader from 'components/ColumnHeader';
 import AddButton from 'components/AddButton';
+import AddPopup from 'components/AddPopup';
+import TaskForm from 'forms/TaskForm';
 
 import TasksRepository from 'repositories/TasksRepository';
 
@@ -18,6 +20,11 @@ const STATES = [
   { key: 'archived', value: 'Archived' },
 ];
 
+const MODES = {
+  ADD: 'add',
+  NONE: 'none',
+};
+
 const initialBoard = {
   columns: STATES.map((column) => ({
     id: column.key,
@@ -30,6 +37,16 @@ const initialBoard = {
 const TaskBoard = () => {
   const [board, setBoard] = useState(initialBoard);
   const [boardCards, setBoardCards] = useState([]);
+
+  const [mode, setMode] = useState(MODES.NONE);
+
+  const handleOpenAddPopup = () => {
+    setMode(MODES.ADD);
+  };
+
+  const handleClose = () => {
+    setMode(MODES.NONE);
+  };
 
   const loadColumn = (state, page, perPage) =>
     TasksRepository.index({
@@ -81,8 +98,17 @@ const TaskBoard = () => {
         loadColumnInitial(source.fromColumnId);
       })
       .catch((error) => {
+        // eslint-disable-next-line no-alert
         alert(`Move failed! ${error.message}`);
       });
+  };
+
+  const handleTaskCreate = (params) => {
+    const attributes = TaskForm.attributesToSubmit(params);
+    return TasksRepository.create(attributes).then(({ data: { task } }) => {
+      loadColumnInitial(task.state);
+      handleClose();
+    });
   };
 
   const loadBoard = () => {
@@ -102,7 +128,8 @@ const TaskBoard = () => {
       >
         {board}
       </KanbanBoard>
-      <AddButton />
+      <AddButton onClick={handleOpenAddPopup} />
+      {mode === MODES.ADD && <AddPopup onCreateCard={handleTaskCreate} onClose={handleClose} />}
     </div>
   );
 };
