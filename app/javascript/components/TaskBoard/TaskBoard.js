@@ -4,6 +4,7 @@ import { propOr } from 'ramda';
 
 import Task from 'components/Task';
 import ColumnHeader from 'components/ColumnHeader';
+import AddButton from 'components/AddButton';
 
 import TasksRepository from 'repositories/TasksRepository';
 
@@ -92,14 +93,17 @@ const TaskBoard = () => {
   useEffect(() => generateBoard(), [boardCards]);
 
   return (
-    <KanbanBoard
-      disableColumnDrag
-      onCardDragEnd={handleCardDragEnd}
-      renderCard={(card) => <Task task={card} />}
-      renderColumnHeader={(column) => <ColumnHeader column={column} onLoadMore={loadColumnMore} />}
-    >
-      {board}
-    </KanbanBoard>
+    <div>
+      <KanbanBoard
+        disableColumnDrag
+        onCardDragEnd={handleCardDragEnd}
+        renderCard={(card) => <Task task={card} />}
+        renderColumnHeader={(column) => <ColumnHeader column={column} onLoadMore={loadColumnMore} />}
+      >
+        {board}
+      </KanbanBoard>
+      <AddButton />
+    </div>
   );
 };
 
