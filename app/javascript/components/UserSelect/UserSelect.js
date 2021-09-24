@@ -11,11 +11,12 @@ import UsersRepository from 'repositories/UsersRepository';
 
 import useStyles from './useStyles';
 
-const UserSelect = ({ error, label, isClearable, isDisabled, isRequired, onChange, value, helperText }) => {
+const UserSelect = ({ error, label, isClearable, isDisabled, isRequired, onChange, value, helperText, userType }) => {
   const [isFocused, setFocus] = useState(false);
   const styles = useStyles();
-  const handleLoadOptions = (inputValue) =>
-    UsersRepository.index({ q: { firstNameOrLastNameCont: inputValue } }).then(({ data }) => data.items);
+  const page = 1;
+  const per = 100;
+  const handleLoadOptions = () => UsersRepository.index({ q: { typeEq: userType }, page, per }).then(({ data }) => data.items);
 
   return (
     <>
@@ -51,6 +52,7 @@ UserSelect.defaultProps = {
   isRequired: true,
   onChange: () => {},
   helperText: '',
+  value: {},
 };
 
 UserSelect.propTypes = {
@@ -60,8 +62,9 @@ UserSelect.propTypes = {
   isDisabled: PropTypes.bool,
   isRequired: PropTypes.bool,
   onChange: PropTypes.func,
-  value: PropTypes.shape().isRequired,
+  value: PropTypes.shape(),
   helperText: PropTypes.string,
+  userType: PropTypes.string.isRequired,
 };
 
 export default UserSelect;

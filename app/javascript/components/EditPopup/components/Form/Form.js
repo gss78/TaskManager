@@ -36,6 +36,7 @@ const Form = ({ errors, onChange, task }) => {
       />
       <UserSelect
         label="Author"
+        userType="Manager"
         value={task.author}
         onChange={handleChangeSelect('author')}
         isDisabled={false}
@@ -45,6 +46,7 @@ const Form = ({ errors, onChange, task }) => {
       />
       <UserSelect
         label="Assignee"
+        userType="Developer"
         value={task.assignee}
         onChange={handleChangeSelect('assignee')}
         isDisabled={false}
