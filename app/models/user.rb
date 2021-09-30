@@ -7,4 +7,24 @@ class User < ApplicationRecord
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+\.[a-z]+\z/i.freeze
   validates :email, format: { with: VALID_EMAIL_REGEX }
   validates :email, uniqueness: true
+
+  def admin?
+    self.is_a? Admin
+  end
+
+  def developer?
+    self.is_a? Developer
+  end
+
+  def manager?
+    self.is_a? Manager
+  end
+
+  def assignee_of? task
+   task.try(:assignee) == self
+  end
+
+  def author_of? task
+   task.try(:author) == self
+  end
 end
