@@ -5,6 +5,11 @@ class TaskPolicy < ApplicationPolicy
   DEVELOPER_ATTRS = [:assignee_id, :state_event]
   ADMIN_ATTRS = MANAGER_ATTRS + DEVELOPER_ATTRS + [:author_id]
 
+  def initialize(user, task)
+    @user = user
+    @task = task 
+  end
+
   def create?
     user.admin? || user.manager?
   end
@@ -25,19 +30,5 @@ class TaskPolicy < ApplicationPolicy
 
   def permitted_attributes_for_create
     user.admin? ? ADMIN_ATTRS : MANAGER_ATTRS
-  end
-
-  def assignee_valid?(assignee_id)
-    assignee_id.present? && Developer.exists?(assignee_id)
-  end
-
-  def author_valid?(author_id)
-    author_id.present? && Manager.exists?(author_id)
-  end
-
-  def validate(attrs)
-    attrs.delete(:assignee_id) unless assignee_valid?(attrs[:assignee_id])
-    attrs.delete(:author_id) unless author_valid?(attrs[:author_id])
-    attrs
   end
 end
