@@ -6,7 +6,7 @@ class TaskPolicy < ApplicationPolicy
   ADMIN_ATTRS = MANAGER_ATTRS + DEVELOPER_ATTRS + [:author_id]
 
   def create?
-    user.admin? || user.manager? 
+    user.admin? || user.manager?
   end
 
   def destroy?
@@ -18,7 +18,7 @@ class TaskPolicy < ApplicationPolicy
       ADMIN_ATTRS
     elsif user.manager?
       MANAGER_ATTRS - [:state_event]
-    elsif user.developer? 
+    elsif user.developer?
       user.assignee_of?(task) ? DEVELOPER_ATTRS : DEVELOPER_ATTRS - [:state_event]
     end
   end
@@ -27,7 +27,7 @@ class TaskPolicy < ApplicationPolicy
     user.admin? ? ADMIN_ATTRS : MANAGER_ATTRS
   end
 
-  def assignee_valid?(assignee_id) 
+  def assignee_valid?(assignee_id)
     assignee_id.present? && Developer.exists?(assignee_id)
   end
 
@@ -40,5 +40,4 @@ class TaskPolicy < ApplicationPolicy
     attrs.delete(:author_id) unless author_valid?(attrs[:author_id])
     attrs
   end
-
 end

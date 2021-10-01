@@ -1,12 +1,11 @@
 class Api::V1::TasksController < Api::V1::ApplicationController
-  
   def index
     tasks = Task.all.
       ransack(ransack_params).
       result.
       page(page).
       per(per_page)
-      
+
     respond_with(tasks, each_serializer: TaskSerializer, root: 'items', meta: build_meta(tasks))
   end
 
@@ -17,15 +16,15 @@ class Api::V1::TasksController < Api::V1::ApplicationController
   end
 
   def create
-    authorize Task
+    authorize(Task)
 
-    attrs = permitted_attributes(Task);
+    attrs = permitted_attributes(Task)
 
-    if current_user.manager?
-      task = current_user.my_tasks.new(attrs)
-    else
-      task = Task.new(validate(attrs))
-    end
+    task = if current_user.manager?
+             current_user.my_tasks.new(attrs)
+           else
+             Task.new(validate(attrs))
+           end
 
     task.save
 
@@ -35,7 +34,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
   def update
     task = Task.find(params[:id])
 
-    attrs = permitted_attributes(task);
+    attrs = permitted_attributes(task)
 
     task.update(validate(attrs))
 
@@ -44,7 +43,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
   def destroy
     task = Task.find(params[:id])
-    authorize task
+    authorize(task)
     task.destroy
 
     respond_with(task)
@@ -52,7 +51,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
   private
 
-  def assignee_valid?(assignee_id) 
+  def assignee_valid?(assignee_id)
     assignee_id.present? && Developer.exists?(assignee_id)
   end
 
@@ -65,5 +64,4 @@ class Api::V1::TasksController < Api::V1::ApplicationController
     attrs.delete(:author_id) unless author_valid?(attrs[:author_id])
     attrs
   end
-
 end

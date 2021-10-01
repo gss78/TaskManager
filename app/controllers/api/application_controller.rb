@@ -9,6 +9,6 @@ class Api::ApplicationController < ApplicationController
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   def user_not_authorized
-    render json: "You are not authorized to perform this action.", status: 403
+    render(json: 'You are not authorized to perform this action.', status: 403)
   end
 end

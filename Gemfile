@@ -43,7 +43,7 @@ gem 'kaminari'
 gem 'ransack', github: 'activerecord-hackery/ransack'
 gem 'responders'
 gem 'active_model_serializers'
-gem 'webpacker-react', "~> 0.3.2"
+gem 'webpacker-react', '~> 0.3.2'
 gem 'js-routes'
 gem 'pundit'
 
