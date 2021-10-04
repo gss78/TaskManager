@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { has } from 'ramda';
 
 import TextField from '@material-ui/core/TextField';
+import { DatePicker } from '@material-ui/pickers';
 
 import useStyles from './useStyles';
 
@@ -11,6 +12,7 @@ import UserSelect from 'components/UserSelect';
 const Form = ({ errors, onChange, task, ability }) => {
   const handleChangeTextField = (fieldName) => (event) => onChange({ ...task, [fieldName]: event.target.value });
   const handleChangeSelect = (fieldName) => (user) => onChange({ ...task, [fieldName]: user });
+  const handleDateChange = (fieldName) => (date) => onChange({ ...task, [fieldName]: date });
   const styles = useStyles();
 
   return (
@@ -55,6 +57,13 @@ const Form = ({ errors, onChange, task, ability }) => {
         isRequired={false}
         error={has('assignee', errors)}
         helperText={errors.author}
+      />
+      <DatePicker
+        label="Expited at"
+        value={task.expiredAt}
+        onChange={handleDateChange('expiredAt')}
+        minDate={new Date()}
+        minDateMessage=""
       />
     </form>
   );

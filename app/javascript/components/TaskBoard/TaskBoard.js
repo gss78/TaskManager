@@ -8,6 +8,8 @@ import AddButton from 'components/AddButton';
 import AddPopup from 'components/AddPopup';
 import EditPopup from 'components/EditPopup';
 import TaskForm from 'forms/TaskForm';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 import TasksRepository from 'repositories/TasksRepository';
 import defineAbilityFor from 'authz/defineAbility';
@@ -149,27 +151,31 @@ const TaskBoard = (user) => {
 
   return (
     <div>
-      <KanbanBoard
-        disableColumnDrag
-        disableCardDrag={enableCardDrag(ability)}
-        onCardDragEnd={handleCardDragEnd}
-        renderCard={(card) => <Task task={card} onClick={handleOpenEditPopup} />}
-        renderColumnHeader={(column) => <ColumnHeader column={column} onLoadMore={loadColumnMore} />}
-      >
-        {board}
-      </KanbanBoard>
-      {ability.can('create', 'Task') && <AddButton onClick={handleOpenAddPopup} />}
-      {mode === MODES.ADD && <AddPopup onCreateCard={handleTaskCreate} onClose={handleClose} ability={ability} />}
-      {mode === MODES.EDIT && (
-        <EditPopup
-          onLoadCard={loadTask}
-          onCardDestroy={handleTaskDestroy}
-          onCardUpdate={handleTaskUpdate}
-          onClose={handleClose}
-          cardId={openedTaskId}
-          ability={ability}
-        />
-      )}
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <>
+          <KanbanBoard
+            disableColumnDrag
+            disableCardDrag={enableCardDrag(ability)}
+            onCardDragEnd={handleCardDragEnd}
+            renderCard={(card) => <Task task={card} onClick={handleOpenEditPopup} />}
+            renderColumnHeader={(column) => <ColumnHeader column={column} onLoadMore={loadColumnMore} />}
+          >
+            {board}
+          </KanbanBoard>
+          {ability.can('create', 'Task') && <AddButton onClick={handleOpenAddPopup} />}
+          {mode === MODES.ADD && <AddPopup onCreateCard={handleTaskCreate} onClose={handleClose} ability={ability} />}
+          {mode === MODES.EDIT && (
+            <EditPopup
+              onLoadCard={loadTask}
+              onCardDestroy={handleTaskDestroy}
+              onCardUpdate={handleTaskUpdate}
+              onClose={handleClose}
+              cardId={openedTaskId}
+              ability={ability}
+            />
+          )}
+        </>
+      </MuiPickersUtilsProvider>
     </div>
   );
 };

@@ -11,6 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
+import { DatePicker } from '@material-ui/pickers';
 
 import TaskForm from 'forms/TaskForm';
 import UserSelect from 'components/UserSelect';
@@ -36,6 +37,7 @@ const AddPopup = ({ onClose, onCreateCard, ability }) => {
   };
   const handleChangeTextField = (fieldName) => (event) => changeTask({ ...task, [fieldName]: event.target.value });
   const handleChangeSelect = (fieldName) => (user) => changeTask({ ...task, [fieldName]: user });
+  const handleDateChange = (fieldName) => (date) => changeTask({ ...task, [fieldName]: date });
   const styles = useStyles();
 
   return (
@@ -93,6 +95,12 @@ const AddPopup = ({ onClose, onCreateCard, ability }) => {
                 helperText={errors.assignee}
               />
             )}
+            <DatePicker
+              label="Expited at"
+              value={task.expiredAt}
+              onChange={handleDateChange('expiredAt')}
+              minDate={new Date()}
+            />
           </div>
         </CardContent>
         <CardActions className={styles.actions}>
