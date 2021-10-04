@@ -17,7 +17,7 @@ import UserSelect from 'components/UserSelect';
 
 import useStyles from './useStyles';
 
-const AddPopup = ({ onClose, onCreateCard }) => {
+const AddPopup = ({ onClose, onCreateCard, ability }) => {
   const [task, changeTask] = useState(TaskForm.defaultAttributes());
   const [isSaving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
@@ -69,26 +69,30 @@ const AddPopup = ({ onClose, onCreateCard }) => {
               required
               margin="dense"
             />
-            <UserSelect
-              label="Author"
-              userType="Manager"
-              value={task.author}
-              onChange={handleChangeSelect('author')}
-              isDisabled={false}
-              isRequired
-              error={has('author', errors)}
-              helperText={errors.author}
-            />
-            <UserSelect
-              label="Assignee"
-              userType="Developer"
-              value={task.assignee}
-              onChange={handleChangeSelect('assignee')}
-              isDisabled={false}
-              isRequired={false}
-              error={has('assignee', errors)}
-              helperText={errors.assignee}
-            />
+            {ability.can('create', 'Task', 'author') && (
+              <UserSelect
+                label="Author"
+                userType="Manager"
+                value={task.author}
+                onChange={handleChangeSelect('author')}
+                isDisabled={false}
+                isRequired
+                error={has('author', errors)}
+                helperText={errors.author}
+              />
+            )}
+            {ability.can('update', 'Task', 'assignee') && (
+              <UserSelect
+                label="Assignee"
+                userType="Developer"
+                value={task.assignee}
+                onChange={handleChangeSelect('assignee')}
+                isDisabled={false}
+                isRequired={false}
+                error={has('assignee', errors)}
+                helperText={errors.assignee}
+              />
+            )}
           </div>
         </CardContent>
         <CardActions className={styles.actions}>
@@ -104,6 +108,7 @@ const AddPopup = ({ onClose, onCreateCard }) => {
 AddPopup.propTypes = {
   onClose: PropTypes.func.isRequired,
   onCreateCard: PropTypes.func.isRequired,
+  ability: PropTypes.shape().isRequired,
 };
 
 export default AddPopup;

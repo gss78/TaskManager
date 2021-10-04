@@ -8,7 +8,7 @@ import useStyles from './useStyles';
 
 import UserSelect from 'components/UserSelect';
 
-const Form = ({ errors, onChange, task }) => {
+const Form = ({ errors, onChange, task, ability }) => {
   const handleChangeTextField = (fieldName) => (event) => onChange({ ...task, [fieldName]: event.target.value });
   const handleChangeSelect = (fieldName) => (user) => onChange({ ...task, [fieldName]: user });
   const styles = useStyles();
@@ -22,6 +22,7 @@ const Form = ({ errors, onChange, task }) => {
         value={task.name}
         label="Name"
         required
+        disabled={ability.cannot('update', 'Task', 'name')}
         margin="dense"
       />
       <TextField
@@ -31,6 +32,7 @@ const Form = ({ errors, onChange, task }) => {
         value={task.description}
         label="Description"
         required
+        disabled={ability.cannot('update', 'Task', 'description')}
         multiline
         margin="dense"
       />
@@ -39,7 +41,7 @@ const Form = ({ errors, onChange, task }) => {
         userType="Manager"
         value={task.author}
         onChange={handleChangeSelect('author')}
-        isDisabled={false}
+        isDisabled={ability.cannot('update', 'Task', 'author')}
         isRequired
         error={has('author', errors)}
         helperText={errors.author}
@@ -49,7 +51,7 @@ const Form = ({ errors, onChange, task }) => {
         userType="Developer"
         value={task.assignee}
         onChange={handleChangeSelect('assignee')}
-        isDisabled={false}
+        isDisabled={ability.cannot('update', 'Task', 'assignee')}
         isRequired={false}
         error={has('assignee', errors)}
         helperText={errors.author}
@@ -61,6 +63,7 @@ const Form = ({ errors, onChange, task }) => {
 Form.propTypes = {
   onChange: PropTypes.func.isRequired,
   task: PropTypes.shape().isRequired,
+  ability: PropTypes.shape().isRequired,
   errors: PropTypes.shape({
     name: PropTypes.arrayOf(PropTypes.string),
     description: PropTypes.arrayOf(PropTypes.string),
