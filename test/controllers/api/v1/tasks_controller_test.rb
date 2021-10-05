@@ -30,7 +30,7 @@ class Api::V1::TasksControllerTest < ActionController::TestCase
     assert_equal task_attributes.stringify_keys, created_task.slice(*task_attributes.keys)
   end
 
-  test 'should post create developer' do
+  test 'should not post create developer' do
     user = create(:developer)
     sign_in(user)
     author = create(:manager)
@@ -134,7 +134,7 @@ class Api::V1::TasksControllerTest < ActionController::TestCase
     assert !Task.where(id: task.id).exists?
   end
 
-  test 'should delete destroy developer' do
+  test 'should not delete destroy developer' do
     user = create(:developer)
     author = create(:manager)
     sign_in(user)
