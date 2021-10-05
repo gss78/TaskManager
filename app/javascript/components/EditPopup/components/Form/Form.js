@@ -64,6 +64,7 @@ const Form = ({ errors, onChange, task, ability }) => {
         onChange={handleDateChange('expiredAt')}
         minDate={new Date()}
         minDateMessage=""
+        disabled={ability.cannot('update', 'Task', 'expireAt')}
       />
     </form>
   );

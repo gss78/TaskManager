@@ -6,12 +6,12 @@ export default (user) =>
       can('update', 'Task', ['assignee', 'state']);
       cannot('create', 'Task');
       cannot('delete', 'Task');
-      cannot('update', 'Task', ['author', 'name', 'description']);
+      cannot('update', 'Task', ['author', 'name', 'description', 'expireAt']);
     } else if (user.type === 'Manager') {
       can('create', 'Task');
       cannot('create', 'Task', 'author');
       can('delete', 'Task', { authorId: user.id });
-      can('update', 'Task', ['name', 'description', 'expire_at']);
+      can('update', 'Task', ['name', 'description', 'expireAt']);
       cannot('update', 'Task', ['state', 'assignee', 'author']);
     } else if (user.type === 'Admin') {
       can('create', 'Task');
