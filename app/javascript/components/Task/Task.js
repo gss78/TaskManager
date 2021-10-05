@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import { isNil } from 'ramda';
+import TaskPresenter from 'presenters/TaskPresenter';
 
 import useStyles from './useStyles';
 
@@ -16,7 +17,11 @@ const Task = ({ task, onClick }) => {
 
   const addExpiredStyle = () => {
     const now = new Date().setHours(0, 0, 0, 0);
-    if (!isNil(task.expiredAt) && task.state !== 'archived' && new Date(task.expiredAt) < now) {
+    if (
+      !isNil(TaskPresenter.expiredAt(task)) &&
+      TaskPresenter.state(task) !== 'archived' &&
+      new Date(TaskPresenter.expiredAt(task)) < now
+    ) {
       return ` ${styles.expired}`;
     }
     return '';
@@ -31,10 +36,10 @@ const Task = ({ task, onClick }) => {
 
   return (
     <Card className={styles.root + addExpiredStyle()}>
-      <CardHeader action={action} title={task.name} />
+      <CardHeader action={action} title={TaskPresenter.name(task)} />
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">
-          {task.description}
+          {TaskPresenter.description(task)}
         </Typography>
       </CardContent>
     </Card>
@@ -42,7 +47,7 @@ const Task = ({ task, onClick }) => {
 };
 
 Task.propTypes = {
-  task: PropTypes.shape().isRequired,
+  task: TaskPresenter.shape().isRequired,
   onClick: PropTypes.func.isRequired,
 };
 
