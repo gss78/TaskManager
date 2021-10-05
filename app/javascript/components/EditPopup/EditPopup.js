@@ -13,6 +13,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Modal from '@material-ui/core/Modal';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { subject } from '@casl/ability';
+import UserPresenter from 'presenters/UserPresenter';
+import TaskPresenter from 'presenters/TaskPresenter';
 
 import Form from './components/Form';
 
@@ -55,10 +57,10 @@ const EditPopup = ({ cardId, onClose, onCardDestroy, onLoadCard, onCardUpdate, a
   const canDelete = () => {
     if (isNil(task)) return false;
 
-    if (isNil(task.author)) {
+    if (isNil(TaskPresenter.author(task))) {
       return ability.can('delete', 'Task');
     }
-    return ability.can('delete', subject('Task', { authorId: task.author.id }));
+    return ability.can('delete', subject('Task', { authorId: UserPresenter.id(TaskPresenter.author(task)) }));
   };
 
   return (
@@ -70,7 +72,11 @@ const EditPopup = ({ cardId, onClose, onCardDestroy, onLoadCard, onCardUpdate, a
               <CloseIcon />
             </IconButton>
           }
-          title={isLoading ? 'Your task is loading. Please be patient.' : `Task # ${task.id} [${task.name}]`}
+          title={
+            isLoading
+              ? 'Your task is loading. Please be patient.'
+              : `Task # ${TaskPresenter.id(task)} [${TaskPresenter.name(task)}]`
+          }
         />
         <CardContent>
           {isLoading ? (
