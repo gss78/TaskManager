@@ -9,6 +9,8 @@ import useStyles from './useStyles';
 
 import UserSelect from 'components/UserSelect';
 
+import TaskPresenter from 'presenters/TaskPresenter';
+
 const Form = ({ errors, onChange, task, ability }) => {
   const handleChangeTextField = (fieldName) => (event) => onChange({ ...task, [fieldName]: event.target.value });
   const handleChangeSelect = (fieldName) => (user) => onChange({ ...task, [fieldName]: user });
@@ -21,7 +23,7 @@ const Form = ({ errors, onChange, task, ability }) => {
         error={has('name', errors)}
         helperText={errors.name}
         onChange={handleChangeTextField('name')}
-        value={task.name}
+        value={TaskPresenter.name(task)}
         label="Name"
         required
         disabled={ability.cannot('update', 'Task', 'name')}
@@ -31,7 +33,7 @@ const Form = ({ errors, onChange, task, ability }) => {
         error={has('description', errors)}
         helperText={errors.description}
         onChange={handleChangeTextField('description')}
-        value={task.description}
+        value={TaskPresenter.description(task)}
         label="Description"
         required
         disabled={ability.cannot('update', 'Task', 'description')}
@@ -41,7 +43,7 @@ const Form = ({ errors, onChange, task, ability }) => {
       <UserSelect
         label="Author"
         userType="Manager"
-        value={task.author}
+        value={TaskPresenter.author(task)}
         onChange={handleChangeSelect('author')}
         isDisabled={ability.cannot('update', 'Task', 'author')}
         isRequired
@@ -51,7 +53,7 @@ const Form = ({ errors, onChange, task, ability }) => {
       <UserSelect
         label="Assignee"
         userType="Developer"
-        value={task.assignee}
+        value={TaskPresenter.assignee(task)}
         onChange={handleChangeSelect('assignee')}
         isDisabled={ability.cannot('update', 'Task', 'assignee')}
         isRequired={false}
@@ -60,7 +62,7 @@ const Form = ({ errors, onChange, task, ability }) => {
       />
       <DatePicker
         label="Expited at"
-        value={task.expiredAt}
+        value={TaskPresenter.expiredAt(task)}
         onChange={handleDateChange('expiredAt')}
         minDate={new Date()}
         minDateMessage=""
@@ -72,7 +74,7 @@ const Form = ({ errors, onChange, task, ability }) => {
 
 Form.propTypes = {
   onChange: PropTypes.func.isRequired,
-  task: PropTypes.shape().isRequired,
+  task: TaskPresenter.shape().isRequired,
   ability: PropTypes.shape().isRequired,
   errors: PropTypes.shape({
     name: PropTypes.arrayOf(PropTypes.string),
