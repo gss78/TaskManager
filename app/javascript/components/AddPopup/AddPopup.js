@@ -15,6 +15,7 @@ import { DatePicker } from '@material-ui/pickers';
 
 import TaskForm from 'forms/TaskForm';
 import UserSelect from 'components/UserSelect';
+import TaskPresenter from 'presenters/TaskPresenter';
 
 import useStyles from './useStyles';
 
@@ -57,7 +58,7 @@ const AddPopup = ({ onClose, onCreateCard, ability }) => {
               error={has('name', errors)}
               helperText={errors.name}
               onChange={handleChangeTextField('name')}
-              value={task.name}
+              value={TaskPresenter.name(task)}
               label="Name"
               required
               margin="dense"
@@ -66,7 +67,7 @@ const AddPopup = ({ onClose, onCreateCard, ability }) => {
               error={has('description', errors)}
               helperText={errors.description}
               onChange={handleChangeTextField('description')}
-              value={task.description}
+              value={TaskPresenter.description(task)}
               label="Description"
               required
               margin="dense"
@@ -75,7 +76,7 @@ const AddPopup = ({ onClose, onCreateCard, ability }) => {
               <UserSelect
                 label="Author"
                 userType="Manager"
-                value={task.author}
+                value={TaskPresenter.author(task)}
                 onChange={handleChangeSelect('author')}
                 isDisabled={false}
                 isRequired
@@ -87,7 +88,7 @@ const AddPopup = ({ onClose, onCreateCard, ability }) => {
               <UserSelect
                 label="Assignee"
                 userType="Developer"
-                value={task.assignee}
+                value={TaskPresenter.assignee(task)}
                 onChange={handleChangeSelect('assignee')}
                 isDisabled={false}
                 isRequired={false}
@@ -97,7 +98,7 @@ const AddPopup = ({ onClose, onCreateCard, ability }) => {
             )}
             <DatePicker
               label="Expited at"
-              value={task.expiredAt}
+              value={TaskPresenter.expiredAt(task)}
               onChange={handleDateChange('expiredAt')}
               minDate={new Date()}
             />
