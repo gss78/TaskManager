@@ -1,5 +1,4 @@
 class Api::V1::TasksController < Api::V1::ApplicationController
-  
   def index
     tasks = Task.all.
       ransack(ransack_params).
@@ -17,7 +16,16 @@ class Api::V1::TasksController < Api::V1::ApplicationController
   end
 
   def create
-    task = current_user.my_tasks.new(task_params)
+    authorize(Task)
+
+    attrs = permitted_attributes(Task)
+
+    task = if current_user.manager?
+             current_user.my_tasks.new(attrs)
+           else
+             Task.new(validate(attrs))
+           end
+
     task.save
 
     respond_with(task, serializer: TaskSerializer, location: nil)
@@ -25,13 +33,17 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
   def update
     task = Task.find(params[:id])
-    task.update(task_params)
+
+    attrs = permitted_attributes(task)
+
+    task.update(validate(attrs))
 
     respond_with(task, serializer: TaskSerializer)
   end
 
   def destroy
     task = Task.find(params[:id])
+    authorize(task)
     task.destroy
 
     respond_with(task)
@@ -39,7 +51,17 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
   private
 
-  def task_params
-    params.require(:task).permit(:name, :description, :author_id, :assignee_id, :state_event, :expired_at)
+  def assignee_valid?(assignee_id)
+    assignee_id.present? && Developer.exists?(assignee_id)
+  end
+
+  def author_valid?(author_id)
+    author_id.present? && Manager.exists?(author_id)
+  end
+
+  def validate(attrs)
+    attrs.delete(:assignee_id) unless assignee_valid?(attrs[:assignee_id])
+    attrs.delete(:author_id) unless author_valid?(attrs[:author_id])
+    attrs
   end
 end

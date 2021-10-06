@@ -11,12 +11,15 @@ import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
+import { DatePicker } from '@material-ui/pickers';
 
 import TaskForm from 'forms/TaskForm';
+import UserSelect from 'components/UserSelect';
+import TaskPresenter from 'presenters/TaskPresenter';
 
 import useStyles from './useStyles';
 
-const AddPopup = ({ onClose, onCreateCard }) => {
+const AddPopup = ({ onClose, onCreateCard, ability }) => {
   const [task, changeTask] = useState(TaskForm.defaultAttributes());
   const [isSaving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
@@ -34,6 +37,8 @@ const AddPopup = ({ onClose, onCreateCard }) => {
     });
   };
   const handleChangeTextField = (fieldName) => (event) => changeTask({ ...task, [fieldName]: event.target.value });
+  const handleChangeSelect = (fieldName) => (user) => changeTask({ ...task, [fieldName]: user });
+  const handleDateChange = (fieldName) => (date) => changeTask({ ...task, [fieldName]: date });
   const styles = useStyles();
 
   return (
@@ -53,7 +58,7 @@ const AddPopup = ({ onClose, onCreateCard }) => {
               error={has('name', errors)}
               helperText={errors.name}
               onChange={handleChangeTextField('name')}
-              value={task.name}
+              value={TaskPresenter.name(task)}
               label="Name"
               required
               margin="dense"
@@ -62,10 +67,40 @@ const AddPopup = ({ onClose, onCreateCard }) => {
               error={has('description', errors)}
               helperText={errors.description}
               onChange={handleChangeTextField('description')}
-              value={task.description}
+              value={TaskPresenter.description(task)}
               label="Description"
               required
               margin="dense"
+            />
+            {ability.can('create', 'Task', 'author') && (
+              <UserSelect
+                label="Author"
+                userType="Manager"
+                value={TaskPresenter.author(task)}
+                onChange={handleChangeSelect('author')}
+                isDisabled={false}
+                isRequired
+                error={has('author', errors)}
+                helperText={errors.author}
+              />
+            )}
+            {ability.can('update', 'Task', 'assignee') && (
+              <UserSelect
+                label="Assignee"
+                userType="Developer"
+                value={TaskPresenter.assignee(task)}
+                onChange={handleChangeSelect('assignee')}
+                isDisabled={false}
+                isRequired={false}
+                error={has('assignee', errors)}
+                helperText={errors.assignee}
+              />
+            )}
+            <DatePicker
+              label="Expited at"
+              value={TaskPresenter.expiredAt(task)}
+              onChange={handleDateChange('expiredAt')}
+              minDate={new Date()}
             />
           </div>
         </CardContent>
@@ -82,6 +117,7 @@ const AddPopup = ({ onClose, onCreateCard }) => {
 AddPopup.propTypes = {
   onClose: PropTypes.func.isRequired,
   onCreateCard: PropTypes.func.isRequired,
+  ability: PropTypes.shape().isRequired,
 };
 
 export default AddPopup;

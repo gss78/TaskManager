@@ -5,12 +5,15 @@ export default {
     return {
       name: '',
       description: '',
+      author: null,
+      assignee: null,
+      expiredAt: null,
       ...attributes,
     };
   },
 
   attributesToSubmit(task) {
-    const pertmittedKeys = ['id', 'name', 'description'];
+    const pertmittedKeys = ['id', 'name', 'description', 'expiredAt'];
 
     return {
       ...pick(pertmittedKeys, task),

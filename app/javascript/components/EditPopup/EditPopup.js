@@ -12,12 +12,15 @@ import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import Modal from '@material-ui/core/Modal';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { subject } from '@casl/ability';
+import UserPresenter from 'presenters/UserPresenter';
+import TaskPresenter from 'presenters/TaskPresenter';
 
 import Form from './components/Form';
 
 import useStyles from './useStyles';
 
-const EditPopup = ({ cardId, onClose, onCardDestroy, onLoadCard, onCardUpdate }) => {
+const EditPopup = ({ cardId, onClose, onCardDestroy, onLoadCard, onCardUpdate, ability }) => {
   const [task, setTask] = useState(null);
   const [isSaving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
@@ -51,6 +54,15 @@ const EditPopup = ({ cardId, onClose, onCardDestroy, onLoadCard, onCardUpdate })
   };
   const isLoading = isNil(task);
 
+  const canDelete = () => {
+    if (isNil(task)) return false;
+
+    if (isNil(TaskPresenter.author(task))) {
+      return ability.can('delete', 'Task');
+    }
+    return ability.can('delete', subject('Task', { authorId: UserPresenter.id(TaskPresenter.author(task)) }));
+  };
+
   return (
     <Modal className={styles.modal} open onClose={onClose}>
       <Card className={styles.root}>
@@ -60,7 +72,11 @@ const EditPopup = ({ cardId, onClose, onCardDestroy, onLoadCard, onCardUpdate })
               <CloseIcon />
             </IconButton>
           }
-          title={isLoading ? 'Your task is loading. Please be patient.' : `Task # ${task.id} [${task.name}]`}
+          title={
+            isLoading
+              ? 'Your task is loading. Please be patient.'
+              : `Task # ${TaskPresenter.id(task)} [${TaskPresenter.name(task)}]`
+          }
         />
         <CardContent>
           {isLoading ? (
@@ -68,22 +84,24 @@ const EditPopup = ({ cardId, onClose, onCardDestroy, onLoadCard, onCardUpdate })
               <CircularProgress />
             </div>
           ) : (
-            <Form errors={errors} onChange={setTask} task={task} />
+            <Form errors={errors} onChange={setTask} task={task} ability={ability} />
           )}
         </CardContent>
         <CardActions className={styles.actions}>
           <Button disabled={isLoading || isSaving} onClick={handleCardUpdate} size="small" variant="contained" color="primary">
             Update
           </Button>
-          <Button
-            disabled={isLoading || isSaving}
-            onClick={handleCardDestroy}
-            size="small"
-            variant="contained"
-            color="secondary"
-          >
-            Destroy
-          </Button>
+          {canDelete() && (
+            <Button
+              disabled={isLoading || isSaving}
+              onClick={handleCardDestroy}
+              size="small"
+              variant="contained"
+              color="secondary"
+            >
+              Destroy
+            </Button>
+          )}
         </CardActions>
       </Card>
     </Modal>
@@ -97,6 +115,7 @@ EditPopup.propTypes = {
   onCardDestroy: PropTypes.func.isRequired,
   onLoadCard: PropTypes.func.isRequired,
   onCardUpdate: PropTypes.func.isRequired,
+  ability: PropTypes.shape().isRequired,
 };
 
 export default EditPopup;

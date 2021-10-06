@@ -3,11 +3,18 @@ import PropTypes from 'prop-types';
 import { has } from 'ramda';
 
 import TextField from '@material-ui/core/TextField';
+import { DatePicker } from '@material-ui/pickers';
 
 import useStyles from './useStyles';
 
-const Form = ({ errors, onChange, task }) => {
+import UserSelect from 'components/UserSelect';
+
+import TaskPresenter from 'presenters/TaskPresenter';
+
+const Form = ({ errors, onChange, task, ability }) => {
   const handleChangeTextField = (fieldName) => (event) => onChange({ ...task, [fieldName]: event.target.value });
+  const handleChangeSelect = (fieldName) => (user) => onChange({ ...task, [fieldName]: user });
+  const handleDateChange = (fieldName) => (date) => onChange({ ...task, [fieldName]: date });
   const styles = useStyles();
 
   return (
@@ -16,20 +23,50 @@ const Form = ({ errors, onChange, task }) => {
         error={has('name', errors)}
         helperText={errors.name}
         onChange={handleChangeTextField('name')}
-        value={task.name}
+        value={TaskPresenter.name(task)}
         label="Name"
         required
+        disabled={ability.cannot('update', 'Task', 'name')}
         margin="dense"
       />
       <TextField
         error={has('description', errors)}
         helperText={errors.description}
         onChange={handleChangeTextField('description')}
-        value={task.description}
+        value={TaskPresenter.description(task)}
         label="Description"
         required
+        disabled={ability.cannot('update', 'Task', 'description')}
         multiline
         margin="dense"
+      />
+      <UserSelect
+        label="Author"
+        userType="Manager"
+        value={TaskPresenter.author(task)}
+        onChange={handleChangeSelect('author')}
+        isDisabled={ability.cannot('update', 'Task', 'author')}
+        isRequired
+        error={has('author', errors)}
+        helperText={errors.author}
+      />
+      <UserSelect
+        label="Assignee"
+        userType="Developer"
+        value={TaskPresenter.assignee(task)}
+        onChange={handleChangeSelect('assignee')}
+        isDisabled={ability.cannot('update', 'Task', 'assignee')}
+        isRequired={false}
+        error={has('assignee', errors)}
+        helperText={errors.author}
+      />
+      <DatePicker
+        label="Expited at"
+        value={TaskPresenter.expiredAt(task)}
+        onChange={handleDateChange('expiredAt')}
+        minDate={new Date()}
+        minDateMessage=""
+        disabled={ability.cannot('update', 'Task', 'expireAt')}
       />
     </form>
   );
@@ -37,7 +74,8 @@ const Form = ({ errors, onChange, task }) => {
 
 Form.propTypes = {
   onChange: PropTypes.func.isRequired,
-  task: PropTypes.shape().isRequired,
+  task: TaskPresenter.shape().isRequired,
+  ability: PropTypes.shape().isRequired,
   errors: PropTypes.shape({
     name: PropTypes.arrayOf(PropTypes.string),
     description: PropTypes.arrayOf(PropTypes.string),
