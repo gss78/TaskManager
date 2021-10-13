@@ -24,7 +24,7 @@ const MODES = {
 
 const TaskBoard = ({ user }) => {
   const ability = defineAbilityFor(user);
-  const { board, loadBoard, loadColumn } = useTasks();
+  const { board, loadBoard, loadColumn, loadColumnMore } = useTasks();
 
   const [mode, setMode] = useState(MODES.NONE);
   const [openedTaskId, setOpenedTaskId] = useState(null);
@@ -43,10 +43,6 @@ const TaskBoard = ({ user }) => {
   const handleOpenEditPopup = (task) => {
     setOpenedTaskId(task.id);
     setMode(MODES.EDIT);
-  };
-
-  const loadColumnMore = (state, page = 1, perPage = 10) => {
-    loadColumn(state, page, perPage, 'mergeItems');
   };
 
   const handleTaskCreate = (params) => {
