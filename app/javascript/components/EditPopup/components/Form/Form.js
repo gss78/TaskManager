@@ -14,7 +14,7 @@ import TaskPresenter from 'presenters/TaskPresenter';
 const Form = ({ errors, onChange, task, ability }) => {
   const handleChangeTextField = (fieldName) => (event) => onChange({ ...task, [fieldName]: event.target.value });
   const handleChangeSelect = (fieldName) => (user) => onChange({ ...task, [fieldName]: user });
-  const handleDateChange = (fieldName) => (date) => onChange({ ...task, [fieldName]: date });
+  const handleDateChange = (fieldName) => (date) => onChange({ ...task, [fieldName]: date.toString() });
   const styles = useStyles();
 
   return (
