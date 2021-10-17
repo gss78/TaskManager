@@ -6,8 +6,8 @@ h3 Users list
   .mdl-cell.mdl-cell--2-col
     = search_form_for(@q, url:admin_users_url, method: :get) do |f|
       .mdl-textfield.mdl-js-textfield
-        = f.search_field :email_cont, class: 'mdl-textfield__input'
-        = f.label :email_cont, class: 'mdl-textfield__label' do
+        = f.search_field :email_or_first_name_or_last_name_cont, class: 'mdl-textfield__input'
+        = f.label :email_or_first_name_or_last_name_cont, class: 'mdl-textfield__label' do
           i.material-icons search
 .mdl-grid
   table.mdl-cell--12-col.mdl-data-table.mdl-js-data-table.mdl-shadow--2dp
