@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import KanbanBoard from '@asseinfo/react-kanban';
-import { propOr } from 'ramda';
 
 import Task from 'components/Task';
 import ColumnHeader from 'components/ColumnHeader';
@@ -10,19 +9,12 @@ import EditPopup from 'components/EditPopup';
 import TaskForm from 'forms/TaskForm';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import PropTypes from 'prop-types';
 
 import TasksRepository from 'repositories/TasksRepository';
 import defineAbilityFor from 'authz/defineAbility';
 
-const STATES = [
-  { key: 'new_task', value: 'New' },
-  { key: 'in_development', value: 'In Dev' },
-  { key: 'in_qa', value: 'In QA' },
-  { key: 'in_code_review', value: 'in CR' },
-  { key: 'ready_for_release', value: 'Ready for release' },
-  { key: 'released', value: 'Released' },
-  { key: 'archived', value: 'Archived' },
-];
+import useTasks from 'hooks/store/useTasks';
 
 const MODES = {
   ADD: 'add',
@@ -30,22 +22,14 @@ const MODES = {
   EDIT: 'edit',
 };
 
-const initialBoard = {
-  columns: STATES.map((column) => ({
-    id: column.key,
-    title: column.value,
-    cards: [],
-    meta: {},
-  })),
-};
-
-const TaskBoard = (user) => {
+const TaskBoard = ({ user }) => {
   const ability = defineAbilityFor(user);
-  const [board, setBoard] = useState(initialBoard);
-  const [boardCards, setBoardCards] = useState([]);
+  const { board, loadBoard, loadColumn, loadColumnMore } = useTasks();
 
   const [mode, setMode] = useState(MODES.NONE);
   const [openedTaskId, setOpenedTaskId] = useState(null);
+
+  useEffect(() => loadBoard(), []);
 
   const handleOpenAddPopup = () => {
     setMode(MODES.ADD);
@@ -53,6 +37,7 @@ const TaskBoard = (user) => {
 
   const handleClose = () => {
     setMode(MODES.NONE);
+    setOpenedTaskId(null);
   };
 
   const handleOpenEditPopup = (task) => {
@@ -60,45 +45,29 @@ const TaskBoard = (user) => {
     setMode(MODES.EDIT);
   };
 
-  const loadTask = (id) => TasksRepository.show(id).then(({ data: { task } }) => task);
-
-  const loadColumn = (state, page, perPage) =>
-    TasksRepository.index({
-      q: { stateEq: state },
-      page,
-      perPage,
-    });
-
-  const loadColumnInitial = (state, page = 1, perPage = 10) => {
-    loadColumn(state, page, perPage).then(({ data }) => {
-      setBoardCards((prevState) => ({
-        ...prevState,
-        [state]: { cards: data.items, meta: data.meta },
-      }));
+  const handleTaskCreate = (params) => {
+    const attributes = TaskForm.attributesToSubmit(params);
+    return TasksRepository.create(attributes).then(({ data: { task } }) => {
+      loadColumn(task.state);
+      handleClose();
     });
   };
+  const handleTaskLoad = (id) => TasksRepository.show(id).then(({ data: { task } }) => task);
 
-  const loadColumnMore = (state, page = 1, perPage = 10) => {
-    loadColumn(state, page, perPage).then(({ data }) => {
-      setBoardCards((prevState) => ({
-        ...prevState,
-        [state]: { cards: [...prevState[state].cards, ...data.items], meta: data.meta },
-      }));
+  const handleTaskUpdate = (task) => {
+    const attributes = TaskForm.attributesToSubmit(task);
+
+    return TasksRepository.update(task.id, attributes).then(() => {
+      loadColumn(task.state);
+      handleClose();
     });
   };
 
-  const generateBoard = () => {
-    const board = {
-      columns: STATES.map(({ key, value }) => ({
-        id: key,
-        title: value,
-        cards: propOr({}, 'cards', boardCards[key]),
-        meta: propOr({}, 'meta', boardCards[key]),
-      })),
-    };
-
-    setBoard(board);
-  };
+  const handleTaskDestroy = (task) =>
+    TasksRepository.destroy(task.id).then(() => {
+      loadColumn(task.state);
+      handleClose();
+    });
 
   const handleCardDragEnd = (task, source, destination) => {
     const transition = task.transitions.find(({ to }) => destination.toColumnId === to);
@@ -108,44 +77,14 @@ const TaskBoard = (user) => {
 
     return TasksRepository.update(task.id, { task: { stateEvent: transition.event } })
       .then(() => {
-        loadColumnInitial(destination.toColumnId);
-        loadColumnInitial(source.fromColumnId);
+        loadColumn(destination.toColumnId);
+        loadColumn(source.fromColumnId);
       })
       .catch((error) => {
         // eslint-disable-next-line no-alert
         alert(`Move failed! ${error.message}`);
       });
   };
-
-  const handleTaskCreate = (params) => {
-    const attributes = TaskForm.attributesToSubmit(params);
-    return TasksRepository.create(attributes).then(({ data: { task } }) => {
-      loadColumnInitial(task.state);
-      handleClose();
-    });
-  };
-
-  const handleTaskUpdate = (task) => {
-    const attributes = TaskForm.attributesToSubmit(task);
-
-    return TasksRepository.update(task.id, attributes).then(() => {
-      loadColumnInitial(task.state);
-      handleClose();
-    });
-  };
-
-  const handleTaskDestroy = (task) =>
-    TasksRepository.destroy(task.id).then(() => {
-      loadColumnInitial(task.state);
-      handleClose();
-    });
-
-  const loadBoard = () => {
-    STATES.map(({ key }) => loadColumnInitial(key));
-  };
-
-  useEffect(() => loadBoard(), []);
-  useEffect(() => generateBoard(), [boardCards]);
 
   const enableCardDrag = (a) => a.cannot('update', 'Task', 'state');
 
@@ -166,7 +105,7 @@ const TaskBoard = (user) => {
           {mode === MODES.ADD && <AddPopup onCreateCard={handleTaskCreate} onClose={handleClose} ability={ability} />}
           {mode === MODES.EDIT && (
             <EditPopup
-              onLoadCard={loadTask}
+              onLoadCard={handleTaskLoad}
               onCardDestroy={handleTaskDestroy}
               onCardUpdate={handleTaskUpdate}
               onClose={handleClose}
@@ -178,6 +117,13 @@ const TaskBoard = (user) => {
       </MuiPickersUtilsProvider>
     </div>
   );
+};
+
+TaskBoard.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    type: PropTypes.string,
+  }).isRequired,
 };
 
 export default TaskBoard;

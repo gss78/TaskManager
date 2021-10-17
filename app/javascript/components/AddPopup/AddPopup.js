@@ -38,7 +38,7 @@ const AddPopup = ({ onClose, onCreateCard, ability }) => {
   };
   const handleChangeTextField = (fieldName) => (event) => changeTask({ ...task, [fieldName]: event.target.value });
   const handleChangeSelect = (fieldName) => (user) => changeTask({ ...task, [fieldName]: user });
-  const handleDateChange = (fieldName) => (date) => changeTask({ ...task, [fieldName]: date });
+  const handleDateChange = (fieldName) => (date) => changeTask({ ...task, [fieldName]: date.toString() });
   const styles = useStyles();
 
   return (
