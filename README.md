@@ -1,4 +1,4 @@
-# TaskManager [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fgss78%2FTaskManager%2Fbadge%3Fref%3Ddevelop&style=flat)](https://actions-badge.atrox.dev/gss78/TaskManager/goto?ref=develop)
+# TaskManager [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fatrox%2Fsync-dotenv%2Fbadge&style=flat)](https://actions-badge.atrox.dev/atrox/sync-dotenv/goto)
 
 This README would normally document whatever steps are necessary to get the
 application up and running.
