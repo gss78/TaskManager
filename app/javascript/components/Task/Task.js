@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Card from '@material-ui/core/Card';
@@ -14,18 +14,29 @@ import useStyles from './useStyles';
 
 const Task = ({ task, onClick }) => {
   const styles = useStyles();
+  const [expired, setExpired] = useState(false);
 
-  const addExpiredStyle = () => {
-    const now = new Date().setHours(0, 0, 0, 0);
+  const isExpired = () => {
     if (
       !isNil(TaskPresenter.expiredAt(task)) &&
       TaskPresenter.state(task) !== 'archived' &&
-      new Date(TaskPresenter.expiredAt(task)) < now
+      new Date(TaskPresenter.expiredAt(task)) < new Date().setHours(0, 0, 0, 0)
     ) {
-      return ` ${styles.expired}`;
+      return true;
     }
-    return '';
+    return false;
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isExpired()) {
+        setExpired(true);
+      }
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => setExpired(isExpired()));
 
   const handleClick = () => onClick(task);
   const action = (
@@ -35,7 +46,7 @@ const Task = ({ task, onClick }) => {
   );
 
   return (
-    <Card className={styles.root + addExpiredStyle()}>
+    <Card className={styles.root + (expired ? ` ${styles.expired}` : '')}>
       <CardHeader action={action} title={TaskPresenter.name(task)} />
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">
