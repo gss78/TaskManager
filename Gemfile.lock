@@ -215,6 +215,7 @@ GEM
     reverse_markdown (2.0.0)
       nokogiri
     rexml (3.2.5)
+    rollbar (3.2.0)
     rubocop (1.21.0)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
@@ -346,6 +347,7 @@ DEPENDENCIES
   rails (~> 6.1.4)
   ransack!
   responders
+  rollbar
   rubocop
   sass-rails (>= 6)
   selenium-webdriver
