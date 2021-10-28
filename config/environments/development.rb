@@ -16,6 +16,9 @@ Rails.application.configure do
     Bullet.bullet_logger = true
   end
 
+  config.action_mailer.delivery_method = :letter_opener_web
+  config.action_mailer.perform_caching = true
+
   # Show full error reports.
   config.consider_all_requests_local = true
 
