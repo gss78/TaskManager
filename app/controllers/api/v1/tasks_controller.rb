@@ -38,7 +38,9 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
     attrs = permitted_attributes(task)
 
-    task.update(validate(attrs))
+    if task.update(validate(attrs))
+      UserMailer.with({ user: task.author, task: task }).task_updated.deliver_now
+    end
 
     respond_with(task, serializer: TaskSerializer)
   end

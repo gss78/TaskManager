@@ -32,4 +32,21 @@ class UserMailerTest < ActionMailer::TestCase
     assert email.body.to_s.include?("Task #{task.id} was deleted")
 
   end
+
+  test "task updated" do
+    author = create(:manager)
+    task = create(:task, author: author)  
+    params = {user: author, task: task }
+    email = UserMailer.with(params).task_updated
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal ['noreply@taskmanager.com'], email.from
+    assert_equal [author.email], email.to
+    assert_equal 'Task Updated', email.subject
+    assert email.body.to_s.include?("Task #{task.id} was updated")
+  end
+
 end
