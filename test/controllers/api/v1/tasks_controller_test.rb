@@ -14,20 +14,25 @@ class Api::V1::TasksControllerTest < ActionController::TestCase
   end
 
   test 'should post create admin' do
-    user = create(:admin)
-    sign_in(user)
-    author = create(:manager)
-    assignee = create(:developer)
-    task_attributes = attributes_for(:task).
-      merge({ assignee_id: assignee.id, author_id: author.id })
-    post :create, params: { task: task_attributes, format: :json }
+    admin = create :admin
+    author = create :manager
+    sign_in(admin)
+  
+    assignee = create :developer
+    task_attributes = attributes_for(:task).merge({ assignee_id: assignee.id, author_id: author.id })
+    
+    assert_emails 1 do
+      post :create, params: { task: task_attributes, format: :json }
+    end
+
     assert_response :created
 
     data = JSON.parse(response.body)
     created_task = Task.find(data['task']['id'])
 
     assert created_task.present?
-    assert_equal task_attributes.stringify_keys, created_task.slice(*task_attributes.keys)
+    assert created_task.assignee.id == assignee.id 
+    assert created_task.author.id == author.id
   end
 
   test 'should not post create developer' do
