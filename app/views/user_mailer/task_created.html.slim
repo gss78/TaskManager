@@ -1,1 +1,3 @@
-== render partial: 'layout', locals: {author: @task.author, title: "Task #{@task.id} created", body: "Task #{@task.id} was created"}
+= render 'layout' do 
+  h3= "Dear #{@task.author.first_name.capitalize} #{@task.author.last_name.capitalize},"
+  p Task #{@task.id} was created
