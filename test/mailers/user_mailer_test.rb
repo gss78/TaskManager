@@ -49,4 +49,19 @@ class UserMailerTest < ActionMailer::TestCase
     assert email.body.to_s.include?("Task #{task.id} was updated")
   end
 
+  test "password_reset" do
+    user = create(:user)
+    user.create_reset_digest
+    email = UserMailer.password_reset(user)
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal [user.email], email.to
+    assert_equal "Password reset", email.subject
+    assert_match user.reset_token, email.body.encoded
+    assert email.body.to_s.include?("Reset password")
+  end
+
 end
