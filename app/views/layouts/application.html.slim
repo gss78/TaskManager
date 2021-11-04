@@ -35,6 +35,9 @@
 
      main#main.mdl-layout__content
        .page-content
+         - flash.each do |message_type, message|
+            div.alert
+              = message
          = yield
      footer#footer.mdl-mini-footer
        .mdl-mini-footer__left-section

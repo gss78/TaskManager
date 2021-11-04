@@ -17,3 +17,9 @@ body {
 .page-content .mdl-textfield {
   display: block;
 }
+
+.alert {
+  text-align: center;
+  width: fit-content;
+  margin: 0 auto;
+}
