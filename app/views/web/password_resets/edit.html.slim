@@ -1,2 +1,8 @@
-h1 Web::PasswordResets#edit
-p Find me in app/views/web/password_resets/edit.html.slim
+h4 Reset password
+= simple_form_for :user, method: :patch, url: password_reset_path(params[:id]) do |f|
+  p
+    = hidden_field_tag :email, @user.email
+    = f.input :password
+    = f.input :password_confirmation
+  p
+    = f.button  :submit, "Update password"
