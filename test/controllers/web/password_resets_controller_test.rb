@@ -12,14 +12,14 @@ class Web::PasswordResetsControllerTest < ActionController::TestCase
     attrs = {
       email: user.email,
     }
-    post :create, params: { password_reset: attrs }
+    post :create, params: { user: attrs }
     assert_not flash.empty?
     assert_redirected_to root_url
   end
 
   test 'should patch update' do
     user = create(:user)
-    user.create_reset_digest
+    user.prepare_reset_data
     attrs = {
       use_route: 'password_resets',
       id: user.reset_token,

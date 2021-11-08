@@ -51,7 +51,7 @@ class UserMailerTest < ActionMailer::TestCase
 
   test "password_reset" do
     user = create(:user)
-    user.create_reset_digest
+    user.prepare_reset_data
     email = UserMailer.password_reset(user)
 
     assert_emails 1 do
