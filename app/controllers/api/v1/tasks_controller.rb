@@ -27,7 +27,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
            end
 
     if task.save 
-      UserMailer.with({ user: task.author, task: task }).task_created.deliver_later
+      SendTaskCreateNotificationJob.perform_async(task.id)
     end  
 
     respond_with(task, serializer: TaskSerializer, location: nil)
@@ -39,7 +39,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
     attrs = permitted_attributes(task)
 
     if task.update(validate(attrs))
-      UserMailer.with({ user: task.author, task: task }).task_updated.deliver_later
+      SendTaskUpdateNotificationJob.perform_async(task.id)
     end
 
     respond_with(task, serializer: TaskSerializer)
@@ -50,7 +50,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
     authorize(task)
 
     if task.destroy
-      UserMailer.with({ user: task.author, task: task }).task_deleted.deliver_later
+      SendTaskDeleteNotificationJob.perform_async(task.id, task.author.id)
     end
 
     respond_with(task)

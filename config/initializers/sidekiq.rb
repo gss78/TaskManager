@@ -11,3 +11,4 @@ Sidekiq.configure_client do |config|
 end
 
 Sidekiq::Throttled.setup!
+Sidekiq::Throttled::Registry.add(:mailer, { threshold: { limit: 1, period: 5.seconds } })

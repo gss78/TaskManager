@@ -11,7 +11,7 @@ class UserMailerPreview < ActionMailer::Preview
   def task_deleted
     user = User.first
     task = Task.first
-    params = { user: user, task: task }
+    params = { user: user, task_id: task.id }
 
     UserMailer.with(params).task_deleted
   end
