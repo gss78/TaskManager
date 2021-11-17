@@ -15,6 +15,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { subject } from '@casl/ability';
 import UserPresenter from 'presenters/UserPresenter';
 import TaskPresenter from 'presenters/TaskPresenter';
+import TasksRepository from 'repositories/TasksRepository';
 
 import Form from './components/Form';
 
@@ -29,6 +30,26 @@ const EditPopup = ({ cardId, onClose, onCardDestroy, onLoadCard, onCardUpdate, a
   useEffect(() => {
     onLoadCard(cardId).then(setTask);
   }, []);
+
+  const handleAttachImage = (data) => {
+    setSaving(true);
+
+    TasksRepository.attachImage(task.id, data)
+      .then(() => {
+        onLoadCard(cardId).then(setTask);
+      })
+      .then(setSaving(false));
+  };
+
+  const handleRemoveImage = () => {
+    setSaving(true);
+
+    TasksRepository.removeImage(task.id)
+      .then(() => {
+        onLoadCard(cardId).then(setTask);
+      })
+      .then(setSaving(false));
+  };
 
   const handleCardUpdate = () => {
     setSaving(true);
@@ -49,7 +70,7 @@ const EditPopup = ({ cardId, onClose, onCardDestroy, onLoadCard, onCardUpdate, a
     onCardDestroy(task).catch((error) => {
       setSaving(false);
 
-      alert(`Destrucion Failed! Error: ${error.message}`);
+      alert(`Destruction Failed! Error: ${error.message}`);
     });
   };
   const isLoading = isNil(task);
@@ -84,7 +105,14 @@ const EditPopup = ({ cardId, onClose, onCardDestroy, onLoadCard, onCardUpdate, a
               <CircularProgress />
             </div>
           ) : (
-            <Form errors={errors} onChange={setTask} task={task} ability={ability} />
+            <Form
+              errors={errors}
+              onChange={setTask}
+              onAttachImage={handleAttachImage}
+              onRemoveImage={handleRemoveImage}
+              task={task}
+              ability={ability}
+            />
           )}
         </CardContent>
         <CardActions className={styles.actions}>
