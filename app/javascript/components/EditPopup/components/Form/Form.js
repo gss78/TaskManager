@@ -1,20 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { has } from 'ramda';
+import { has, isNil } from 'ramda';
 
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import { DatePicker } from '@material-ui/pickers';
 
 import useStyles from './useStyles';
 
 import UserSelect from 'components/UserSelect';
+import ImageUpload from 'components/ImageUpload';
 
 import TaskPresenter from 'presenters/TaskPresenter';
 
-const Form = ({ errors, onChange, task, ability }) => {
+const Form = ({ errors, onChange, onAttachImage, onRemoveImage, task, ability }) => {
   const handleChangeTextField = (fieldName) => (event) => onChange({ ...task, [fieldName]: event.target.value });
   const handleChangeSelect = (fieldName) => (user) => onChange({ ...task, [fieldName]: user });
   const handleDateChange = (fieldName) => (date) => onChange({ ...task, [fieldName]: date.toString() });
+
   const styles = useStyles();
 
   return (
@@ -68,12 +71,28 @@ const Form = ({ errors, onChange, task, ability }) => {
         minDateMessage=""
         disabled={ability.cannot('update', 'Task', 'expireAt')}
       />
+
+      {ability.can('update', 'Task', 'image') &&
+        (isNil(TaskPresenter.imageUrl(task)) ? (
+          <div className={styles.imageUploadContainer}>
+            <ImageUpload onUpload={onAttachImage} />
+          </div>
+        ) : (
+          <div className={styles.previewContainer}>
+            <img className={styles.preview} src={TaskPresenter.imageUrl(task)} alt="Attachment" />
+            <Button variant="contained" size="small" color="primary" onClick={onRemoveImage}>
+              Remove image
+            </Button>
+          </div>
+        ))}
     </form>
   );
 };
 
 Form.propTypes = {
   onChange: PropTypes.func.isRequired,
+  onAttachImage: PropTypes.func.isRequired,
+  onRemoveImage: PropTypes.func.isRequired,
   task: TaskPresenter.shape().isRequired,
   ability: PropTypes.shape().isRequired,
   errors: PropTypes.shape({
