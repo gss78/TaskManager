@@ -80,9 +80,11 @@ const Form = ({ errors, onChange, onAttachImage, onRemoveImage, task, ability })
         ) : (
           <div className={styles.previewContainer}>
             <img className={styles.preview} src={TaskPresenter.imageUrl(task)} alt="Attachment" />
-            <Button variant="contained" size="small" color="primary" onClick={onRemoveImage}>
-              Remove image
-            </Button>
+            <div>
+              <Button variant="contained" size="small" color="primary" onClick={onRemoveImage}>
+                Remove image
+              </Button>
+            </div>
           </div>
         ))}
     </form>
