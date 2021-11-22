@@ -26,7 +26,9 @@ class Api::V1::TasksController < Api::V1::ApplicationController
              Task.new(validate(attrs))
            end
 
-    task.save
+    if task.save 
+      UserMailer.with({ user: task.author, task: task }).task_created.deliver_now
+    end  
 
     respond_with(task, serializer: TaskSerializer, location: nil)
   end
@@ -36,7 +38,9 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
     attrs = permitted_attributes(task)
 
-    task.update(validate(attrs))
+    if task.update(validate(attrs))
+      UserMailer.with({ user: task.author, task: task }).task_updated.deliver_now
+    end
 
     respond_with(task, serializer: TaskSerializer)
   end
@@ -44,7 +48,10 @@ class Api::V1::TasksController < Api::V1::ApplicationController
   def destroy
     task = Task.find(params[:id])
     authorize(task)
-    task.destroy
+
+    if task.destroy
+      UserMailer.with({ user: task.author, task: task }).task_deleted.deliver_now
+    end
 
     respond_with(task)
   end

@@ -1,0 +1,6 @@
+h4 Forgot password
+= simple_form_for :user, url: password_resets_path do |f|
+  p
+    = f.input :email
+  p
+    = f.button  :submit, "Send"
