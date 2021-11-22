@@ -3,10 +3,21 @@ version: '2'
 services:
   db:
     image: postgres:10.3-alpine
+  redis:
+    image: redis:5.0.9-alpine
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq -C /task_manager/config/sidekiq.yml
+    environment: *web-environment
+    volumes: *web-volumes
+    depends_on:
+      - redis  
   ci:
     build: .
     depends_on:
       - db
+      - redis
+      - sidekiq
     environment:
       - COVERAGE
       - RAILS_ENV
@@ -14,4 +25,5 @@ services:
       - COVERALLS_REPO_TOKEN
       - DATABASE_HOST=db
       - DATABASE_USERNAME=postgres
+      - REDIS_URL=redis://redis
     command: sh -c "bundle exec rails webpacker:install && bundle exec rails db:create db:migrate && bundle exec rake test"
