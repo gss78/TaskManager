@@ -48,6 +48,10 @@ gem 'js-routes'
 gem 'pundit'
 gem 'rollbar'
 gem 'newrelic_rpm'
+gem 'sidekiq'
+gem 'sidekiq-failures'
+gem 'sidekiq-throttled'
+gem 'sidekiq-unique-jobs'
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
