@@ -58,9 +58,9 @@ class Api::V1::TasksController < Api::V1::ApplicationController
   end
 
   def attach_image
+    authorize(Task)
     task = Task.find(params[:id])
     task_attach_image_form = TaskAttachImageForm.new(attachment_params)
-    authorize(task)
 
     if task_attach_image_form.invalid?
       respond_with task_attach_image_form
@@ -74,10 +74,10 @@ class Api::V1::TasksController < Api::V1::ApplicationController
   end
   
   def remove_image
+    authorize(Task)
     task = Task.find(params[:id])
     task.image.purge
-    authorize(task)
-  
+    
     respond_with(task, serializer: TaskSerializer)
   end
 
