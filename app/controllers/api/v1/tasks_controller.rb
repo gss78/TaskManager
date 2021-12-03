@@ -1,6 +1,7 @@
 class Api::V1::TasksController < Api::V1::ApplicationController
   def index
     tasks = Task.all.
+      with_attached_image.
       ransack(ransack_params).
       result.
       page(page).
@@ -56,7 +57,35 @@ class Api::V1::TasksController < Api::V1::ApplicationController
     respond_with(task)
   end
 
+  def attach_image
+    authorize(Task)
+    task = Task.find(params[:id])
+    task_attach_image_form = TaskAttachImageForm.new(attachment_params)
+
+    if task_attach_image_form.invalid?
+      respond_with task_attach_image_form
+      return
+    end
+  
+    image = task_attach_image_form.processed_image
+    task.image.attach(image)
+  
+    respond_with(task, serializer: TaskSerializer)
+  end
+  
+  def remove_image
+    authorize(Task)
+    task = Task.find(params[:id])
+    task.image.purge
+    
+    respond_with(task, serializer: TaskSerializer)
+  end
+
   private
+
+  def attachment_params
+    params.require(:attachment).permit(:image, :crop_x, :crop_y, :crop_width, :crop_height)
+  end
 
   def assignee_valid?(assignee_id)
     assignee_id.present? && Developer.exists?(assignee_id)

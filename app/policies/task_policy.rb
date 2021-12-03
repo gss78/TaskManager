@@ -18,6 +18,14 @@ class TaskPolicy < ApplicationPolicy
     user.admin? || (user.manager? && user.author_of?(task))
   end
 
+  def attach_image?
+    user.admin? || user.manager?
+  end
+
+  def remove_image?
+    user.admin? || user.manager?
+  end
+
   def permitted_attributes_for_update
     if user.admin?
       ADMIN_ATTRS

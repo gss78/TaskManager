@@ -5,6 +5,7 @@ class Task < ApplicationRecord
   validates :description, presence: true
   validates :author, presence: true
   validates :description, length: { maximum: 500 }
+  has_one_attached :image
 
   state_machine initial: :new_task do
     event :in_development do

@@ -52,6 +52,10 @@ gem 'sidekiq'
 gem 'sidekiq-failures'
 gem 'sidekiq-throttled'
 gem 'sidekiq-unique-jobs'
+gem 'mini_magick'
+gem 'virtus'
+gem 'file_validators'
+
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
