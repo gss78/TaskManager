@@ -10,6 +10,7 @@ export default new PropTypesPresenter(
     assignee: PropTypes.object,
     state: PropTypes.string,
     expiredAt: PropTypes.string,
+    imageUrl: PropTypes.string,
   },
   {},
 );
